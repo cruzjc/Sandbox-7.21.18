@@ -2,156 +2,267 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//https://docs.unity3d.com/ScriptReference/WaitForSeconds.html
+
 //auto adds component
 //[RequireComponent(typeof())]
-
-[RequireComponent(typeof(Animation))]
-[RequireComponent(typeof(AudioSource))]
 public class HawaiianBobtailSquid : MonoBehaviour {
-    #region other variables
     [SerializeField]
-    private string _name;
-    public string Name {
-        get {
-            return name;
-        }
-        set {
-            name = value;
-        }
-    }
+    [Tooltip("Component References")]
+    private ComponentReferences CR;
 
     [SerializeField]
-    private float _attention;
-    public float Attention {
-        get {
-            return _attention;
+    [Tooltip("Primary Stats")]
+    protected PrimaryStats PS;
+    
+    #region primary stats update functions
+        //to be called in update,updates stats (to recover,etc)
+        void PrimaryStatUpdate() {
+        PassivePatienceStatRecovery();
+        PassiveHungerStatRecovery();
+    }
+
+        #region statUpdate:Patience
+        protected float PatienceRecoveryUnit;
+        protected float PatienceRecoveryRate;
+        private void PassivePatienceStatRecovery() {
+            PS.Patience += RateUtility(PatienceRecoveryUnit, PatienceRecoveryRate);
         }
-        set {
-            _attention = value;
+        #endregion
+
+        #region statUpdate:Hunger
+        protected float HungerRecoveryUnit;
+        protected float HungerRecoveryRate;
+        private void PassiveHungerStatRecovery() {
+            PS.Hunger += RateUtility(HungerRecoveryUnit, HungerRecoveryRate);
         }
-    }
+        #endregion
 
-    #endregion
-
-    #region variable mutator functions
-    void setName(string newName) {
-        Name = newName;
-    }
-
-    void giveAttention(float amount) {
-        Attention = amount;
-    }
-
-    #endregion
+    #endregion primary stats update functions
 
     #region primary state machine
-    public enum state { idle, crying, hungry, irked, angry, happy, sleeping }
-    public state currentState;
-    void primaryStateMachine() {
-        switch (currentState) {
-            case state.idle:
-                idlingState();
-                break;
-            case state.crying:
-                cryingState();
-                break;
-            case state.hungry:
-                hungryState();
-                break;
-            case state.irked:
-                irkedState();
-                break;
-            case state.angry:
-                angryState();
-                break;
-            case state.happy:
-                happyState();
-                break;
-            case state.sleeping:
-                sleepingState();
-                break;
+        private enum State { idle, crying, hungry, irked, angry, happy, sleeping }
+        [SerializeField]
+        private State currentState;
+        void PrimaryStateMachine() {
+            switch (currentState) {
+                case State.idle:
+                    idlingState();
+                    break;
+                case State.crying:
+                    cryingState();
+                    break;
+                case State.hungry:
+                    hungryState();
+                    break;
+                case State.irked:
+                    irkedState();
+                    break;
+                case State.angry:
+                    angryState();
+                    break;
+                case State.happy:
+                    happyState();
+                    break;
+                case State.sleeping:
+                    sleepingState();
+                    break;
 
-            default:
-                Debug.LogError("Primary state machine defaulting", gameObject);
-                break;
+                default:
+                    Debug.LogError("Primary state machine defaulting", gameObject);
+                    break;
+            }
         }
-    }
 
 
     #endregion
 
-    #region behaviors
-    void idlingState() {
-        //todo
-    }
+    #region state behaviors
+        void idlingState() {
+            //todo
+        }
 
-    void cryingState() {
-        //todo
-    }
+        void cryingState() {
+            //todo
+        }
 
-    void hungryState() {
-        //todo
-    }
+        void hungryState() {
+            //todo
+        }
 
-    void irkedState() {
-        //todo
-    }
+        void irkedState() {
+            //todo
+        }
 
-    void angryState() {
-        //todo
-    }
+        void angryState() {
+            //todo
+        }
 
-    void happyState() {
-        //todo
-    }
+        void happyState() {
+            //todo
+        }
 
-    void sleepingState() {
-        //todo
-    }
+        void sleepingState() {
+            //todo
+        }
     #endregion
 
     #region unity functions
-    // Use this for initialization
-    void Start() {
-        MainInitialization();
-    }
+        // Use this for initialization
+        void Start() {
+            MainInitialization();
+        }
 
-    // Update is called once per frame
-    void Update() {
+        // Update is called once per frame
+        void Update() {
+            PrimaryStatUpdate();
+            PrimaryStateMachine();
+        }
 
-    }
+        private void FixedUpdate() {
 
-    private void FixedUpdate() {
-        primaryStateMachine();
-    }
+        }
 
-    #endregion
+    
+
+    #endregion unity functions
 
     #region main initialization function
     void MainInitialization() {
-        SetupAnimationComponent();
-        SetupAudioSourceComponent();
+        
     }
-    #endregion
+    #endregion main initialization function
+
+
+    #region utility functions
+
+    //currentTim:=use outer float variable
+    //trigger:use outer bool variable
+    //todo
+        public void Timer(float startingTime,out float currentTime,out bool trigger) {
+                currentTime = 0;
+                trigger = false;
+
+                if (trigger == false) {
+                    currentTime -= Time.deltaTime;
+                }
+
+        
+                if (currentTime < 0) {
+                    trigger = true;
+                    currentTime = startingTime;
+                }
+            }
+
+        //helps process a rate (unit per time),uses Time.deltaTime
+        public float RateUtility(float unit,float time) {
+            float result = (Time.deltaTime * unit) / time;
+            return result;
+        }
+    # endregion utility functions
+}
+
+//https://answers.unity.com/questions/1261103/how-to-group-public-variables-in-the-editor.html
+//stuff to drag into inspector
+[System.Serializable]
+public struct ComponentReferences {
+    #region colliders
+    public Collider InteractCollider;
+    public Collider BodyPhysicsCollider;
+    #endregion colliders
+
+
 
     #region animation
-    void SetupAnimationComponent() {
+    public Animator AnimatorComponent;
+    #endregion animation
 
-    }
-    #endregion
 
     #region sound
-    AudioSource audioSource;
-    AudioClip clip1;
-    AudioClip clip2;
-    AudioClip clip3;
-    AudioClip clip4;
-    AudioClip clip5;
-    AudioClip clip6;
+    public AudioSource AudioSourceComponent;
+    public AudioClip clip1;
+    public AudioClip clip2;
+    public AudioClip clip3;
+    public AudioClip clip4;
+    public AudioClip clip5;
+    public AudioClip clip6;
 
-    void SetupAudioSourceComponent() {
-        audioSource = GetComponent<AudioSource>();
+
+    #endregion sound
+
+}
+
+
+[System.Serializable]
+public struct PrimaryStats {
+    #region primary stats
+    #region stat:OverallMood
+    [SerializeField]
+    //private int _overallMood;//overall mood
+    private int OverallMood {
+        get { return 0; }
+        set { Debug.Log("Can't set OverallMood variable, dependent on other stats"); }
     }
-    
-    #endregion
+    #endregion stat:OverallMood
+
+    #region stat:Patience
+    public int PatienceMax;
+    public float _patience;//tolerance for players bs
+    public float Patience {
+        get { return _patience; }
+        set {
+            if (_patience + value > PatienceMax) {
+                _patience = PatienceMax;
+            } else {
+                _patience = value;
+            }
+        }
+    }
+    #endregion stat:Patience
+
+    #region stat:Hunger
+    public int HungerMax;
+    public float _hunger;//how hungry
+    public float Hunger {
+        get { return _hunger; }
+        set {
+            if (_hunger + value > HungerMax) {
+                _hunger = HungerMax;
+            } else {
+                _hunger = value;
+            }
+        }
+    }
+    #endregion stat:Hunger
+
+    #region stat:Upset
+    public int UpsetMax;
+    public float _upset;//how upset
+    public float Upset {
+        get { return _upset; }
+        set {
+            if (_upset + value > UpsetMax) {
+                _upset = UpsetMax;
+            } else {
+                _upset = value;
+            }
+        }
+    }
+    #endregion stat:Upset
+
+    #region stat:Excitement
+    public int ExcitementMax;
+    public float _excitement;//used to trigger an excited state
+    public float Excitement {
+        get { return _excitement; }
+        set {
+            if (_excitement + value > ExcitementMax) {
+                _excitement = ExcitementMax;
+            } else {
+                _excitement = value;
+            }
+        }
+    }
+    #endregion stat:Excitement
+    #endregion primary stats
 }
