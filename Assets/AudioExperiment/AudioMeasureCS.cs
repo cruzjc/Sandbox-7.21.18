@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//this script basically came from here. huge help.
 //https://answers.unity.com/questions/157940/getoutputdata-and-getspectrumdata-they-represent-t.html
 
 public class AudioMeasureCS : MonoBehaviour {
