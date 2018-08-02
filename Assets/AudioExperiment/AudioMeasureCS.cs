@@ -80,6 +80,6 @@ public class AudioMeasureCS : MonoBehaviour {
 
         //convert index to frequency
         PitchValue = freqN * (_fSample / 2) / QSamples;
-        Debug.Log(PitchValue.ToString("F0") + " Hz");
+        //Debug.Log(PitchValue.ToString("F0") + " Hz");
     }
 }
